@@ -55,3 +55,8 @@ Finally, use 'bt' to produce the actual backtrace:
 (gdb) 
 
 Looks like LMMS is using some QT helper classes that are performing malloc()'s!
+
+
+== Related applications ==
+
+http://trac.jackaudio.org/wiki/WalkThrough/Dev/Tools
