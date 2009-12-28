@@ -14,6 +14,7 @@ bool in_rt = false;
 
 JackProcessCallback real_process_callback;
 
+/* this doesn't quite seem to work - not sure why yet
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
   static int (*func)();
@@ -29,6 +30,7 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
     func = (int (*)()) dlsym(RTLD_NEXT, "pthread_cond_wait");
   return(func(cond, mutex));
 }
+*/
 
 int pthread_join(pthread_t thread, void **value_ptr)
 {
