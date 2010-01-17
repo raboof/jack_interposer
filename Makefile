@@ -6,6 +6,7 @@ jack_interposer.so: jack_interposer.c
 
 test: test_new test_cond_wait test_cond_wait_simple jack_interposer.so
 	LD_PRELOAD=./jack_interposer.so ./test_cond_wait_simple
+	LD_PRELOAD=./jack_interposer.so ./test_cond_wait
 	LD_PRELOAD=./jack_interposer.so ./test_new
 
 test_new: test_new.cpp
