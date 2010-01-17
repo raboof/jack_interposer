@@ -6,7 +6,6 @@ my $fragment = `cat checker_fragment.c`;
 
 while (<STDIN>)
 {
-	print "Handling $_\n";
 	$_ =~ /(.*)\|(.*)\|(.*)\|(.*)/;
 	my $returntype = $1;
 	my $name = $2;
@@ -20,7 +19,5 @@ while (<STDIN>)
 	$currentFragment =~ s/\$parameternames/$parameternames/gs;
 
 	print CHECKERS $currentFragment;
-	print "done\n";
 }
-print "alldone\n";
 close(CHECKERS);
