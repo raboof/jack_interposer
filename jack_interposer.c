@@ -7,6 +7,7 @@
 #include <dlfcn.h>
 #include <poll.h>
 #include <jack/jack.h>
+#include <pthread.h>
 
 #define ABORT_ON_VIOLATION 1
 
@@ -17,7 +18,7 @@
 // This assumes there is only 1 thread running at a time, thus introducing
 // the limitation that jack_interposer is only usable on single-CPU machines
 // (or machines configured to run the application under test on only 1 CPU).
-bool in_rt = false;
+//bool in_rt = false;
 
 JackProcessCallback real_process_callback;
 
@@ -25,6 +26,7 @@ int pthread_cond_wait(pthread_cond_t * cond, pthread_mutex_t * mutex)
 {
   static int (*func)(pthread_cond_t*, pthread_mutex_t*);
 
+/*
   if (in_rt)
   {
     printf("pthread_cond_wait() is called while in rt section\n");     
@@ -32,12 +34,19 @@ int pthread_cond_wait(pthread_cond_t * cond, pthread_mutex_t * mutex)
     abort();
 #endif
   }
+*/
+
   if(!func)
     func = (int (*)(pthread_cond_t*, pthread_mutex_t*)) dlsym(RTLD_NEXT, "pthread_cond_wait");
+  if (func == NULL)
+  {
+    fprintf(stderr, "Error dlsym'ing\n");
+    abort();
+  }
   return(func(cond, mutex));
 }
 
-
+/*
 int pthread_join(pthread_t thread, void **value_ptr)
 {
   static int (*func)();
@@ -166,16 +175,17 @@ void * malloc(size_t size)
     func = (void *(*)()) dlsym(RTLD_NEXT, "malloc");
   return(func(size));
 }
+*/
 
 int interposed_process_callback(jack_nframes_t nframes, void* arg)
 {
   int result;
 
-  in_rt = true;
+ // in_rt = true;
 
   result = real_process_callback(nframes, arg);
 
-  in_rt = false;
+//  in_rt = false;
 
   return result;
 }
