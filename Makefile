@@ -1,7 +1,7 @@
 TESTS=test_new test_cond_wait test_cond_wait_simple test_printf
 
 jack_interposer.so: jack_interposer.c checker.c
-	gcc -Wall -fPIC -o jack_interposer.so -shared jack_interposer.c -pthread 
+	gcc -Wall -fPIC -o jack_interposer.so -shared jack_interposer.c -pthread -ldl
 
 checker.c: functions
 	./generate_checkers.pl < functions
