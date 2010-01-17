@@ -10,6 +10,13 @@
 
 #define ABORT_ON_VIOLATION 1
 
+// is set to 'true' when entering the process-callback and to 'false' when 
+// leaving it. When set to 'true', calls to non-realtime functions will 
+// cause warnings/errors.
+// 
+// This assumes there is only 1 thread running at a time, thus introducing
+// the limitation that jack_interposer is only usable on single-CPU machines
+// (or machines configured to run the application under test on only 1 CPU).
 bool in_rt = false;
 
 JackProcessCallback real_process_callback;
