@@ -7,7 +7,7 @@
 #include <dlfcn.h>
 #include <poll.h>
 #include <jack/jack.h>
-#include <pthread.h>
+#include <stdarg.h>
 
 #define ABORT_ON_VIOLATION 1
 
@@ -23,6 +23,20 @@ bool in_rt = false;
 #include "checkers.c"
 
 JackProcessCallback real_process_callback;
+
+int fprintf(FILE *stream, const char *format, ...)
+{
+  va_list ap;
+  va_start(ap, format);
+  return vfprintf(stream, format, ap);
+}
+
+int printf(const char *format, ...)
+{
+  va_list ap;
+  va_start(ap, format);
+  return vprintf(format, ap);
+}
 
 int pthread_cond_timedwait(pthread_cond_t * cond, pthread_mutex_t * mutex, const struct timespec* abstime)
 {
