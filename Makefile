@@ -1,5 +1,8 @@
-jack_interposer.so: jack_interposer.c
+jack_interposer.so: jack_interposer.c checker.c
 	gcc -Wall -o jack_interposer.so -shared jack_interposer.c -pthread
+
+checker.c: functions
+	./generate_checkers.pl < functions
 
 .PHONY clean: 
 	rm jack_interposer.so test_cond_wait test_cond_wait_simple 

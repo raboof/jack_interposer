@@ -20,6 +20,8 @@
 // (or machines configured to run the application under test on only 1 CPU).
 bool in_rt = false;
 
+#include "checkers.c"
+
 JackProcessCallback real_process_callback;
 
 int pthread_cond_timedwait(pthread_cond_t * cond, pthread_mutex_t * mutex, const struct timespec* abstime)
@@ -69,135 +71,6 @@ int pthread_cond_wait(pthread_cond_t * cond, pthread_mutex_t * mutex)
     abort();
   }
   return(func(cond, mutex));
-}
-
-int pthread_join(pthread_t thread, void **value_ptr)
-{
-  static int (*func)();
-
-  if (in_rt)
-  {
-    printf("pthread_join() is called while in rt section\n");
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (int (*)()) dlsym(RTLD_NEXT, "pthread_join");
-  return(func(thread, value_ptr));
-}
-
-int select(int nfds, fd_set *readfds, fd_set *writefds,
-                  fd_set *exceptfds, struct timeval *timeout)
-{
-  static int (*func)();
-
-  if (in_rt)
-  {
-    printf("select() is called while in rt section\n");
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (int (*)()) dlsym(RTLD_NEXT, "select");
-  return(func(nfds, readfds, writefds, exceptfds, timeout));
-}
-
-int poll(struct pollfd *fds, nfds_t nfds, int timeout)
-{
-  static int (*func)();
-
-  if (in_rt)
-  {
-    printf("poll() is called while in rt section\n");
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (int (*)()) dlsym(RTLD_NEXT, "poll");
-  return(func(fds, nfds, timeout));
-}
-
-pid_t wait(int* status)
-{
-  static pid_t (*func)();
-
-  if (in_rt)
-  {
-    printf("wait() is called while in rt section\n");
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (pid_t (*)()) dlsym(RTLD_NEXT, "wait");
-  return(func(status));
-}
-
-unsigned int sleep(unsigned int seconds)
-{
-  static unsigned int (*func)();
-
-  if (in_rt)
-  {
-    printf("sleep(%d) is called while in rt section\n", seconds);     
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (unsigned int (*)()) dlsym(RTLD_NEXT, "sleep");
-  return(func(seconds));
-}
-
-int pthread_mutex_lock(pthread_mutex_t *mutex)
-{
-  static int (*func)();
-
-  if (in_rt)
-  {
-    printf("pthread_mutex_lock() is called while in rt section\n");     
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (int (*)()) dlsym(RTLD_NEXT, "pthread_mutex_lock");
-  return(func(mutex));
-}
-
-void free(void* ptr)
-{
-  static void * (*func)();
-
-  if (in_rt)
-  {
-    printf("free() is called while in rt section\n");     
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (void *(*)()) dlsym(RTLD_NEXT, "free");
-  func(ptr);
-}
-
-void * malloc(size_t size)
-{
-  static void * (*func)();
-
-  if (in_rt)
-  {
-    printf("malloc(%d) is called while in rt section\n", size);     
-#if ABORT_ON_VIOLATION
-    abort();
-#endif
-  }
-  if(!func)
-    func = (void *(*)()) dlsym(RTLD_NEXT, "malloc");
-  return(func(size));
 }
 
 int interposed_process_callback(jack_nframes_t nframes, void* arg)
