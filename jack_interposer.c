@@ -21,23 +21,22 @@ bool in_rt = false;
 
 JackProcessCallback real_process_callback;
 
-/* this doesn't quite seem to work - not sure why yet
-int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
+int pthread_cond_wait(pthread_cond_t * cond, pthread_mutex_t * mutex)
 {
-  static int (*func)();
+  static int (*func)(pthread_cond_t*, pthread_mutex_t*);
 
   if (in_rt)
   {
-    printf("pthread_cond_wait() is called while in rt section\n");
+    printf("pthread_cond_wait() is called while in rt section\n");     
 #if ABORT_ON_VIOLATION
     abort();
 #endif
   }
   if(!func)
-    func = (int (*)()) dlsym(RTLD_NEXT, "pthread_cond_wait");
+    func = (int (*)(pthread_cond_t*, pthread_mutex_t*)) dlsym(RTLD_NEXT, "pthread_cond_wait");
   return(func(cond, mutex));
 }
-*/
+
 
 int pthread_join(pthread_t thread, void **value_ptr)
 {
