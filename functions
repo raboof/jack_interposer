@@ -1,6 +1,7 @@
 int|select|int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout|nfds, readfds, writefds, exceptfds, timeout
 unsigned int|sleep|unsigned int seconds|seconds
 void *|malloc|size_t size|size
+void *|realloc|void *ptr, size_t size|ptr, size
 void|free|void* ptr|ptr
 int|pthread_mutex_lock|pthread_mutex_t *mutex|mutex
 int|pthread_join|pthread_t thread, void **value_ptr|thread, value_ptr
