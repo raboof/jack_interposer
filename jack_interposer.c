@@ -103,15 +103,24 @@ int interposed_process_callback(jack_nframes_t nframes, void* arg)
 int jack_set_process_callback(jack_client_t* client,
 	JackProcessCallback process_callback, void* arg)
 {
-  static int (*func)();
+  printf("hi!\n");
+
+  static int (*func)() = NULL;
   int result;
 
   if(!func)
     func = (int(*)()) dlsym(RTLD_NEXT, "jack_set_process_callback");
-
+  if(!func)
+  {
+    fprintf(stderr, "Error dlsym'ing jack_set_process_callback\n");
+    abort();
+  }
+ 
   real_process_callback = process_callback;
 
   result = func(client, interposed_process_callback, arg);
+
+  printf("Result is %d\n", result);
 
   return result;
 }
