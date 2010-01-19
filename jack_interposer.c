@@ -103,8 +103,6 @@ int interposed_process_callback(jack_nframes_t nframes, void* arg)
 int jack_set_process_callback(jack_client_t* client,
 	JackProcessCallback process_callback, void* arg)
 {
-  printf("hi!\n");
-
   static int (*func)() = NULL;
   int result;
 
@@ -119,8 +117,6 @@ int jack_set_process_callback(jack_client_t* client,
   real_process_callback = process_callback;
 
   result = func(client, interposed_process_callback, arg);
-
-  printf("Result is %d\n", result);
 
   return result;
 }
