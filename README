@@ -58,8 +58,9 @@ Looks like LMMS is using some QT helper classes that are performing malloc()'s!
 
 == Limitations ==
 
-jack_interposer currently only works for single-CPU machines, or machines 
-configured to run the application under test on a single CPU.
+Unless compiled with GCC 3.3 or later, jack_interposer only works for 
+single-CPU machines, or machines configured to run the application under test 
+on a single CPU.
 
 == Related applications ==
 
