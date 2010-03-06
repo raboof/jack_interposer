@@ -16,6 +16,45 @@ int printf(const char *format, ...)
   return vprintf(format, ap);
 }
 
+// see http://sourceware.org/ml/libc-hacker/2001-08/msg00018.html
+bool in_calloc_dlsym = false;
+
+void * calloc(size_t nmemb, size_t size)
+{
+  static void * (*callocp)(size_t nmemb, size_t size);
+  char* error;
+
+  if (in_calloc_dlsym)
+  {
+    return NULL;
+  }
+
+  if (in_rt)
+  {
+    printf("calloc() is called while in rt section\n");
+#if ABORT_ON_VIOLATION
+    abort();
+#endif
+  }
+  if(!callocp)
+  {
+    in_calloc_dlsym = true;
+    callocp = (void * (*)(size_t nmemb, size_t size)) dlsym(RTLD_NEXT, "calloc");
+    in_calloc_dlsym = false;
+    if ((error = dlerror()) != NULL) {
+      fputs(error, stderr);
+      abort();
+    }
+  }
+  if(!callocp)
+  {
+    fprintf(stderr, "Error dlsym'ing calloc\n");
+    abort();
+  }
+  return(callocp(nmemb, size));
+}
+
+
 int pthread_cond_timedwait(pthread_cond_t * cond, pthread_mutex_t * mutex, const struct timespec* abstime)
 {
   static int (*func)(pthread_cond_t*, pthread_mutex_t*, const struct timespec* abstime);
