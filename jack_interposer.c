@@ -11,14 +11,27 @@
 
 #define ABORT_ON_VIOLATION 1
 
+// Define THREAD_LOCAL as the keyword for thread-local storage if the compiler
+// supports it.
+#if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
+#define THREAD_LOCAL __thread
+#else
+#define THREAD_LOCAL
+#endif
+
 // is set to 'true' when entering the process-callback and to 'false' when 
 // leaving it. When set to 'true', calls to non-realtime functions will 
 // cause warnings/errors.
 // 
-// This assumes there is only 1 thread running at a time, thus introducing
-// the limitation that jack_interposer is only usable on single-CPU machines
-// (or machines configured to run the application under test on only 1 CPU).
-bool in_rt = false;
+// If this library is compiled with GCC 3.3 or later in_rt will have
+// thread-local storage, which means that it should work on SMP machines and
+// with multiple clients in the same process.
+//
+// If this library is built using another compiler it will NOT have
+// thread-local storage, thus introducing the limitation that jack_interposer
+// is only usable on single-CPU machines (or machines configured to run the
+// application under test on only 1 CPU).
+bool THREAD_LOCAL in_rt = false;
 
 #include "checkers.c"
 #include "manual.c"
