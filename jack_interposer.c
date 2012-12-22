@@ -57,6 +57,8 @@ int jack_set_process_callback(jack_client_t* client,
   static int (*func)() = NULL;
   int result;
 
+  fprintf(stderr, "jack_interposer: wrapping process callback\n");
+
   if(!func)
     func = (int(*)()) dlsym(RTLD_NEXT, "jack_set_process_callback");
   if(!func)
